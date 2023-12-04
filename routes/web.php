@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FrontController;
+use App\Http\Controllers\QuestionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,3 +15,4 @@ use App\Http\Controllers\FrontController;
 */
 
 Route::get('/', [FrontController::class,'home'])->name('home');
+Route::get('/questions', [QuestionController::class,'index'])->name('questions');
