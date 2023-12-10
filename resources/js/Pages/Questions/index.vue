@@ -3,7 +3,7 @@
     <div class="pt-50 pb-50">
      <div class="container">
         <div class="d-flex flex-row-reverse mb-3">
-            <button class="btn btn-success" @click="openModal">Create New</button>
+            <button class="btn btn-success"  @click="showCreateModal()">Create New</button>
         </div>
         <table class="table table-bordered table-striped">
         <thead>
@@ -38,36 +38,54 @@
      </div>
     </div>
 
-    <teleport to="body">
-        <QuestionsCreate :showModal="showModal"  @close="showModal = false"></QuestionsCreate>
-    </teleport>
+
+    <Teleport to="body">
+        <modal :show="showModal" @close="showModal = false">
+            <template #header>
+                <h3>Create new question</h3>
+            </template>
+            <template #body>
+                <form action="" method="post">
+                    <div class="form-group">
+                        <label> Question </label>
+                        <input type="text" name="question" class="form-control">
+                    </div>
+                    <div class="form-group d-flex flex-row-reverse ">
+                        <button type="submit" class="btn btn-success ml-auto">Save!</button>
+                    </div>
+                </form>
+            </template>
+            <template #footer>
+                <div></div>
+            </template>
+        </modal>
+    </Teleport>
+
 
    </Layout>
 </template>
 
 <script>
 import Layout from "@/Shared/Layout.vue"
-import QuestionsCreate from "@/Pages/Questions/create.vue"
+import Modal from '@/Shared/Modal.vue'
 import { ref } from 'vue'
 
 
 export default {
-    components:{
-        QuestionsCreate
-    },
-    components:{
+     components:{
         Layout,
+        Modal
     },
     setup(){
         const showModal  = ref(false);
 
-        const openModal = () => {
+        const showCreateModal = () => {
             showModal.value = true;
         }
 
         return {
             showModal,
-            openModal
+            showCreateModal
         }
     }
 }
