@@ -16,3 +16,4 @@ use App\Http\Controllers\QuestionController;
 
 Route::get('/', [FrontController::class,'home'])->name('home');
 Route::get('/questions', [QuestionController::class,'index'])->name('questions');
+Route::post('/questions/store', [QuestionController::class,'store'])->name('questions.store');
