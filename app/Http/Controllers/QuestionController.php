@@ -13,7 +13,8 @@ class QuestionController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Questions/index');
+        $questions = Question::with('answers')->get();
+        return Inertia::render('Questions/index',compact('questions'));
     }
 
     /**
@@ -29,9 +30,21 @@ class QuestionController extends Controller
      */
     public function store(Request $request)
     {
-        return response([
-            $request->all()
+        $data = $request->validate([
+            'question' => 'required|string|max:150',
+            'answsers' => 'required|array',
+            'answsers.*.answer' => 'required|string|max:150',
+            'answsers.*.isCorrect' => 'required||in:0,1',
         ]);
+        
+
+        $question = Question::create([
+            'name' =>$data['question']
+        ]);
+       
+        $question->answers()->createMany($data['answsers']);
+        
+         return redirect()->back()->with('success','Question created succcefully');
     }
 
     /**

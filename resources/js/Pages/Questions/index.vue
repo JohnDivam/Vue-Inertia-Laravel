@@ -6,34 +6,26 @@
             <button class="btn btn-success"  @click="showCreateModal()">Create New</button>
         </div>
         <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-            </tr>
-            <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-            </tr>
-            <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-            </tr>
-        </tbody>
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Question</th>
+                <th scope="col">Anwsers</th>
+                <th scope="col">Created at</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(question) in questions" :key="question.id">
+                    <th scope="row">{{question.id}}</th>
+                    <td>{{question.name}}</td>
+                    <td>
+                        <span v-for="(answer) in question.answers" :key="answer.id" class="badge badge-warning text-dark">
+                            {{answer.answer}}
+                        </span>
+                    </td>
+                    <td>@mdo</td>
+                </tr>
+            </tbody>
         </table>
      </div>
     </div>
@@ -46,6 +38,15 @@
             </template>
             <template #body>
                 <form action="" method="post">
+                    <div v-if="success" class="alert alert-success">
+                        {{success}}
+                    </div>
+                     <div v-if="info" class="alert alert-info">
+                        {{info}}
+                    </div>
+                     <div v-if="error" class="alert alert-danger">
+                        {{error}}
+                    </div>
                     <div class="form-group">
                         <label> Question </label>
                         <input type="text"   v-model="questionName" name="question" class="form-control">
@@ -104,13 +105,18 @@
 import Layout from "@/Shared/Layout.vue"
 import Modal from '@/Shared/Modal.vue'
 import axios from 'axios';
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { usePage , router} from '@inertiajs/vue3'
+
 
 
 export default {
      components:{
         Layout,
         Modal
+    },
+    props:{
+        questions: Object
     },
     setup(){
         const showModal  = ref(false);
@@ -139,12 +145,20 @@ export default {
         };
 
         const createQuestion = () => {
-            axios.post('/questions/store',{
+            router.post('/questions/store',{
                     question: questionName.value,
                     answsers: questionAnswsers.value
                 }
             )
-        }
+
+            router.on('success',()=>{
+                questionName.value = null;
+                questionAnswsers.value = [];
+            });
+        }   
+
+        const page = usePage();
+        const success = computed(() => page.props.flash.success);
 
         return {
             showModal,
@@ -153,7 +167,8 @@ export default {
             questionAnswsers,
             addAnwserToArray,
             createQuestion,
-            HangeChangeIsCorrect
+            HangeChangeIsCorrect,
+            success
         }
     }
 }
